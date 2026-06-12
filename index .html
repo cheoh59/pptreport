@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>毕业汇报 · 封面</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:   oklch(0.975 0.004 240);
+    --ink:  oklch(0.20 0.025 258);
+    --muted:oklch(0.48 0.022 255);
+    --faint:oklch(0.65 0.014 255);
+    --line: oklch(0.20 0.025 258 / 0.12);
+    --accent:      oklch(0.56 0.18 242);
+    --accent-glow: oklch(0.56 0.18 242 / 0.15);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#07080b}
+  body{overflow:hidden;font-family:"Noto Sans SC",system-ui,sans-serif;
+    display:flex;align-items:center;justify-content:center}
+
+  /* ── slide canvas ── */
+  .slide{
+    width:1920px;height:1080px;
+    position:relative;flex:0 0 auto;
+    transform-origin:center center;
+    background:var(--bg);
+    overflow:hidden;
+  }
+
+  /* ── Spline full-bleed layer ── */
+  .spline-layer{
+    position:absolute;inset:0;z-index:1;
+  }
+  .spline-layer iframe{
+    width:100%;height:100%;border:0;display:block;
+  }
+
+  /* ── gradient veils so text zones are readable ── */
+  /* top veil */
+  .veil-top{
+    position:absolute;top:0;left:0;right:0;
+    height:280px;z-index:2;pointer-events:none;
+    background:linear-gradient(to bottom,
+      var(--bg) 0%,
+      oklch(0.975 0.004 240 / .92) 30%,
+      transparent 100%);
+  }
+  /* bottom veil */
+  .veil-bottom{
+    position:absolute;bottom:0;left:0;right:0;
+    height:220px;z-index:2;pointer-events:none;
+    background:linear-gradient(to top,
+      var(--bg) 0%,
+      oklch(0.975 0.004 240 / .88) 35%,
+      transparent 100%);
+  }
+  /* left/right thin veils for edge labels */
+  .veil-left{
+    position:absolute;top:0;left:0;bottom:0;width:100px;z-index:2;pointer-events:none;
+    background:linear-gradient(to right, oklch(0.975 0.004 240 / .5) 0%, transparent 100%);
+  }
+  .veil-right{
+    position:absolute;top:0;right:0;bottom:0;width:100px;z-index:2;pointer-events:none;
+    background:linear-gradient(to left, oklch(0.975 0.004 240 / .5) 0%, transparent 100%);
+  }
+
+  /* ── corner brackets ── */
+  .corner{position:absolute;width:44px;height:44px;border:1.5px solid var(--line);z-index:5}
+  .corner.tl{top:48px;left:48px;border-right:0;border-bottom:0}
+  .corner.tr{top:48px;right:48px;border-left:0;border-bottom:0}
+  .corner.bl{bottom:48px;left:48px;border-right:0;border-top:0}
+  .corner.br{bottom:48px;right:48px;border-left:0;border-top:0}
+
+  /* ── side edge labels ── */
+  .edge{
+    position:absolute;font-size:12px;letter-spacing:.38em;
+    color:var(--faint);z-index:5;white-space:nowrap;
+  }
+  .edge.left{
+    left:58px;top:50%;
+    transform:translateY(-50%) rotate(-90deg);
+    transform-origin:center center;
+  }
+  .edge.right{
+    right:58px;top:50%;
+    transform:translateY(-50%) rotate(90deg);
+    transform-origin:center center;
+  }
+
+  /* ── TOP TEXT ── */
+  .top{
+    position:absolute;top:0;left:0;right:0;
+    z-index:4;
+    display:flex;flex-direction:column;
+    align-items:center;
+    padding-top:64px;
+    gap:18px;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:18px;
+    font-size:17px;letter-spacing:.52em;color:var(--muted);font-weight:400;
+    padding-left:.52em;
+  }
+  .eyebrow .dot{
+    width:7px;height:7px;border-radius:50%;flex:0 0 auto;
+    background:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-glow);
+  }
+  .eyebrow .rule{width:36px;height:1px;background:var(--line)}
+  .main-title{
+    font-size:120px;font-weight:900;line-height:1;
+    letter-spacing:.16em;padding-left:.16em;
+    color:var(--ink);
+  }
+
+  /* ── BOTTOM INFO ── */
+  .bottom{
+    position:absolute;bottom:0;left:0;right:0;
+    z-index:4;
+    display:flex;align-items:center;justify-content:center;
+    padding-bottom:64px;
+  }
+  .meta{display:flex;align-items:center}
+  .cell{
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    padding:0 68px;
+  }
+  .cell+.cell{border-left:1px solid var(--line)}
+  .cell .lab{font-size:13px;letter-spacing:.44em;color:var(--faint);font-weight:400}
+  .cell .val{font-size:26px;font-weight:600;letter-spacing:.18em;color:var(--ink)}
+  .cell .val.mono{font-family:"Space Mono",monospace;font-size:22px;font-weight:700;letter-spacing:.22em}
+
+  /* thin rule above bottom cells */
+  .sep{
+    position:absolute;bottom:156px;left:50%;transform:translateX(-50%);
+    width:480px;height:1px;background:var(--line);z-index:4;
+  }
+
+  /* ── animations ── */
+  @media (prefers-reduced-motion: no-preference){
+    .anim{opacity:0;transform:translateY(20px);
+      animation:rise .9s cubic-bezier(.15,.85,.3,1) forwards}
+    .d1{animation-delay:.1s}
+    .d2{animation-delay:.26s}
+    .d3{animation-delay:.42s}
+    .d4{animation-delay:.82s}
+    .d5{animation-delay:.96s}
+    .d6{animation-delay:1.10s}
+    .corner,.edge,.sep{opacity:0;animation:fin .8s ease forwards;animation-delay:1.3s}
+    .veil-top,.veil-bottom,.veil-left,.veil-right{opacity:0;
+      animation:fin 1.2s ease forwards;animation-delay:.05s}
+  }
+  @keyframes rise{to{opacity:1;transform:translateY(0)}}
+  @keyframes fin{to{opacity:1}}
+</style>
+</head>
+<body>
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#eaf0f8"/>
+      <circle cx="50" cy="35" r="11" fill="none" stroke="#2b6fe0" stroke-width="2.5"/>
+      <rect x="37" y="50" width="26" height="18" rx="3" fill="none" stroke="#2b6fe0" stroke-width="2.5"/>
+      <line x1="37" y1="60" x2="27" y2="67" stroke="#2b6fe0" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="63" y1="60" x2="73" y2="67" stroke="#2b6fe0" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="43" y1="68" x2="43" y2="82" stroke="#2b6fe0" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="57" y1="68" x2="57" y2="82" stroke="#2b6fe0" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </template>
+
+  <div class="slide" id="slide" data-screen-label="封面">
+
+    <!-- 全屏 Spline -->
+    <div class="spline-layer">
+      <iframe src="https://my.spline.design/nexbotrobotcharacterconcept-0cljZGkDtsjkjQ0DkMfX4emx/"
+        frameborder="0" width="100%" height="100%" title="Nexbot 机器人" loading="eager" allowfullscreen></iframe>
+    </div>
+
+    <!-- 渐变遮罩 -->
+    <div class="veil-top"></div>
+    <div class="veil-bottom"></div>
+    <div class="veil-left"></div>
+    <div class="veil-right"></div>
+
+    <!-- 角标 -->
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <!-- 边缘标签 -->
+    <div class="edge left">三 峡 大 学 · 毕 业 汇 报</div>
+    <div class="edge right">二〇二六届 · 毕 业 生</div>
+
+    <!-- 顶部标题 -->
+    <div class="top">
+      <div class="eyebrow anim d1">
+        <span class="rule"></span>
+        <span class="dot"></span>
+        <span>三峡大学 · 二〇二六届</span>
+        <span class="dot"></span>
+        <span class="rule"></span>
+      </div>
+      <div class="main-title anim d2">毕业汇报</div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="sep"></div>
+    <div class="bottom">
+      <div class="meta">
+        <div class="cell anim d4">
+          <div class="lab">汇报人</div>
+          <div class="val">陈念恒</div>
+        </div>
+        <div class="cell anim d5">
+          <div class="lab">学校</div>
+          <div class="val">三峡大学</div>
+        </div>
+        <div class="cell anim d6">
+          <div class="lab">日期</div>
+          <div class="val mono">2026.06</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function(){
+      var slide = document.getElementById('slide');
+      function fit(){
+        var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        slide.style.transform = 'scale(' + s + ')';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+    })();
+  </script>
+</body>
+</html>
